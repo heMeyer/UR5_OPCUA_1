@@ -2,6 +2,8 @@ import asyncio
 import time
 import asyncua as ua
 
+# "from asyncua import ua" instead of "import asyncua as ua"
+
 from asyncua import Client
 
 urlUR5 = "opc.tcp://172.16.2.24:4840"
@@ -15,7 +17,7 @@ async def read_var(node_id):
 
             print(value)
             time.sleep(1)
-            # await asyncio.sleep(1) -> now the program shoudnt be stuck in this function
+            # "await asyncio.sleep(1)" -> now the program shoudnt be stuck in this function
 
 
 async def write_var(node_id):
