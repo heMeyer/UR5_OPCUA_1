@@ -15,6 +15,7 @@ async def read_var(node_id):
 
             print(value)
             time.sleep(1)
+            # await asyncio.sleep(1) -> now the program shoudnt be stuck in this function
 
 
 async def write_var(node_id):
