@@ -3,8 +3,8 @@ from asyncua import ua
 from asyncua import Client
 
 urlUR5 = "opc.tcp://172.16.2.24:4840"
-node_id1 = "ns=2;s=test"
 
+node_id1 = "ns=2;s=test"
 node_id_start = "ns=2;s=start"
 node_id_isBusy = "ns=2;s=isBusy"
 
@@ -29,6 +29,7 @@ async def start_program(client, var):
     node = client.get_node(node_id_start)
     await node.write_value(var)
 
+
 async def write_coordinates(client, coordinates):
     print("Hier sollen mal coordinaten gewrited werden")
 
@@ -39,7 +40,7 @@ async def main():
         read1 = asyncio.create_task(read_var(client, node_id_start))
         read2 = asyncio.create_task(read_var(client, node_id_isBusy))
 
-        await asyncio.create_task(start_program(client, False))
+        await asyncio.create_task(start_program(client, True))
 
         await asyncio.sleep(10)
 
