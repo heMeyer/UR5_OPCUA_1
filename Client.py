@@ -21,28 +21,30 @@ async def read_var(client, node_id):
         node = client.get_node(node_id)
         value = await node.read_value()
 
-        print("start variable: " + str(value))
-        print("isBusy variable: ")
+        print(str(node_id) + " = " + str(value))
         await asyncio.sleep(1)
 
 
-async def start_program(client):
+async def start_program(client, var):
     node = client.get_node(node_id_start)
+    await node.write_value(var)
 
-    await node.write_value(True)
+async def write_coordinates(client, coordinates):
+    print("Hier sollen mal coordinaten gewrited werden")
 
 
 async def main():
     async with Client(url=urlUR5) as client:
 
-        asyncio.create_task(read_var(client, node_id_start))
-        # asyncio.create_task(read_var(client, node_id_isBusy))
+        read1 = asyncio.create_task(read_var(client, node_id_start))
+        read2 = asyncio.create_task(read_var(client, node_id_isBusy))
 
-        # await asyncio.create_task(start_program(client))
+        await asyncio.create_task(start_program(client, False))
 
-        await asyncio.sleep(5)
-        read_var(client, node_id_isBusy).close()
-        read_var(client, node_id_start).close()
+        await asyncio.sleep(10)
+
+        read1.cancel()
+        read2.cancel()
         print("All tasks done")
 
 
