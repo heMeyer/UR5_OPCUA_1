@@ -8,13 +8,12 @@ node_id1 = "ns=2;s=test"
 node_id_start = "ns=2;s=start"
 node_id_isBusy = "ns=2;s=isBusy"
 
-node_id_posXpick = "ns=2;s=posXpick"
-node_id_posYpick = "ns=2;s=posYpick"
-node_id_posZpick = "ns=2;s=posZpick"
-node_id_rotXpick = "ns=2;S=rotXpick"
-node_id_rotYpick = "ns=2;S=rotYpick"
-node_id_rotZpick = "ns=2;S=rotZpick"
+node_id_posPick = ["ns=2;s=posXpick", "ns=2;s=posYpick", "ns=2;s=posZpick",
+                   "ns=2;s=rotXpick", "ns=2;s=rotYpick", "ns=2;s=rotZpick"]
 
+pos_pick = [-0.111, -0.448, 0.088,
+            3.114, -0.264, -0.085]
+# 0.36, 3.15, -0.04
 
 async def read_var(client, node_id):
     while True:
@@ -30,25 +29,33 @@ async def start_program(client, var):
     await node.write_value(var)
 
 
-async def write_coordinates(client, coordinates):
-    print("Hier sollen mal coordinaten gewrited werden")
+async def write_pos(client, node_ids, pos):
+    for i in range(6):
+        node = client.get_node(node_ids[i])
+        await node.write_value(pos[i], ua.VariantType.Double)
+
+
+async def read_pos(client, node_ids):
+    for i in range(6):
+        node = client.get_node(node_ids[i])
+        value = await node.read_value()
+        print(str(node_ids[i]) + " = " + str(value))
 
 
 async def main():
     async with Client(url=urlUR5) as client:
 
-        read1 = asyncio.create_task(read_var(client, node_id_start))
         read2 = asyncio.create_task(read_var(client, node_id_isBusy))
 
+        await asyncio.create_task(write_pos(client, node_id_posPick, pos_pick))
+        await asyncio.create_task(read_pos(client, node_id_posPick))
         await asyncio.create_task(start_program(client, True))
 
-        await asyncio.sleep(10)
+        await asyncio.sleep(20)
 
-        read1.cancel()
         read2.cancel()
         print("All tasks done")
 
 
 if __name__ == "__main__":
     asyncio.run(main())
-
