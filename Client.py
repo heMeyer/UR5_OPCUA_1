@@ -1,6 +1,7 @@
 import asyncio
 from asyncua import ua
 from asyncua import Client
+import math
 
 urlUR5 = "opc.tcp://172.16.2.24:4840"
 
@@ -41,6 +42,17 @@ async def write_pos(client, node_ids, pos):
     for i in range(6):
         node = client.get_node(node_ids[i])
         await node.write_value(pos[i], ua.VariantType.Double)
+        
+# async def write_pos(client, node_ids, pos):
+      dist = 0;
+#     for i in range(3):
+#         dist = dist + pos[i]
+#     if(math.sqrt(dist) > robot_reach:
+#         print("Aua, position out of reach")
+#     else: -> weiter machen und position setzten
+#     for i in range(6):
+#         node = client.get_node(node_ids[i])
+#         await node.write_value(pos[i], ua.VariantType.Double)
 
 
 async def read_pos(client, node_ids):
