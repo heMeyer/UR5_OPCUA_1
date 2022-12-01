@@ -3,7 +3,8 @@ from asyncua import ua
 from asyncua import Client
 import math
 
-urlUR5 = "opc.tcp://172.16.2.24:4840"
+# urlUR5 = "opc.tcp://172.16.2.24:4840"
+urlUR5 = "opc.tcp://192.168.157.233:4840"
 
 node_id_start = "ns=2;s=start"
 node_id_isBusy = "ns=2;s=isBusy"
@@ -12,26 +13,26 @@ node_id_isBusy = "ns=2;s=isBusy"
 node_id_posPick = ["ns=2;s=posXpick", "ns=2;s=posYpick", "ns=2;s=posZpick",
                    "ns=2;s=rotXpick", "ns=2;s=rotYpick", "ns=2;s=rotZpick"]
 
-pos_pick = [-0.090, -0.598, 0.228,
-            0.049, -2.230, 2.228]
+pos_pick = [0.03307, -1.07107, -0.29178,
+            0.005, 2.230, -2.221]
 
 node_id_pos2Pick = ["ns=2;s=posX2pick", "ns=2;s=posY2pick", "ns=2;s=posZ2pick",
                     "ns=2;s=rotX2pick", "ns=2;s=rotY2pick", "ns=2;s=rotZ2pick"]
 
-pos_2pick = [-0.090, -0.598, 0.228,
-             0.049, -2.230, 2.228]
+pos_2pick = [0.03307, -0.78944, -0.27178,
+             0.004, 2.230, -2.221]
 
 node_id_posPlace = ["ns=2;s=posXplace", "ns=2;s=posYplace", "ns=2;s=posZplace",
                     "ns=2;s=rotXplace", "ns=2;s=rotYplace", "ns=2;s=rotZplace"]
 
-pos_place = [-0.633, -0.331, 0.220,
-             1.349, 2.504, -2.595]
+pos_place = [-0.22241, -1.02312, -0.29178,
+             0.005, -2.189, 2.247]
 
 node_id_pos2Place = ["ns=2;s=posX2place", "ns=2;s=posY2place", "ns=2;s=posZ2place",
                      "ns=2;s=rotX2place", "ns=2;s=rotY2place", "ns=2;s=rotZ2place"]
 
-pos_2place = [-0.633, -0.331, 0.220,
-              1.349, 2.504, -2.595]
+pos_2place = [-0.22240, -0.79624, -0.27178,
+              0.005, -2.190, 2.247]
 
 
 async def read_var_cont(client, node_id):
@@ -48,23 +49,17 @@ async def start_program(client, var):
     await node.write_value(var)
 
 
-#async def write_pos(client, node_ids, pos):
-#    for i in range(6):
-#        node = client.get_node(node_ids[i])
-#        await node.write_value(pos[i], ua.VariantType.Double)
-
-
 async def write_pos(client, node_ids, pos):
-    dist = 0
-    reach = 1
-    for i in range(3):
-        dist = dist + pos[i]
-    if math.sqrt(dist) > reach:
-        print("Selected position out of reach")
-    else:
-        for i in range(6):
-            node = client.get_node(node_ids[i])
-            await node.write_value(pos[i], ua.VariantType.Double)
+    dist = 0.0
+    reach = 1.0
+#    for i in range(3):
+#        dist = dist + math.pos[i]
+#    if math.sqrt(dist) > reach:
+#        print("Selected position out of reach")
+#    else:
+    for i in range(6):
+        node = client.get_node(node_ids[i])
+        await node.write_value(pos[i], ua.VariantType.Double)
 
 
 async def read_pos(client, node_ids):
@@ -96,9 +91,9 @@ async def main():
         await asyncio.create_task(read_pos(client, node_id_pos2Place))
 
         # Start Program
-        await asyncio.create_task(start_program(client, False))
+        await asyncio.create_task(start_program(client, True))
 
-        await asyncio.sleep(20)
+        await asyncio.sleep(60)
 
         read_is_busy.cancel()
         print("All tasks done")
