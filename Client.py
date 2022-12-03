@@ -1,6 +1,5 @@
 import asyncio
-from asyncua import ua
-from asyncua import Client
+from asyncua import Client, ua
 import math
 
 # urlUR5 = "opc.tcp://172.16.2.24:4840"
