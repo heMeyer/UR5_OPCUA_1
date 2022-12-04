@@ -1,6 +1,7 @@
 import asyncio
 from asyncua import Server, ua
 from asyncua.common.methods import uamethod
+from asyncua.common.xmlimporter import XmlImporter
 import logging
 
 
@@ -16,6 +17,12 @@ async def main():
     server = Server()
     await server.init()
     server.set_endpoint("opc.tcp://0.0.0.0:4840")
+
+    # import xml nodes
+    # importer = XmlImporter(server)
+    # nodes = await importer.import_xml('UR5_OPCUA.xml')
+    # wait importer.make_objects(nodes)
+    await server.import_xml("UR5_OPCUA.xml")
 
     # setup namespace, not really necessary but should as spec
     uri = "https://github.com/heMeyer/UR5_OPCUA_1.git"
