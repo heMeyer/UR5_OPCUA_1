@@ -53,16 +53,16 @@ async def main():
         read_is_busy = asyncio.create_task(read_var_cont(client, node_id_isBusy))
 
         # Give id for Position of Pick/Place and site of where the module is located to the robot
-        await asyncio.create_task(write_pos(client, node_id_module_pick_nr, node_id_module_pick_dir, 2, 1))
+        await asyncio.create_task(write_pos(client, node_id_module_pick_nr, node_id_module_pick_dir, 1, 1))
         await asyncio.create_task(read_pos(client, node_id_module_pick_nr, node_id_module_pick_dir))
 
-        await asyncio.create_task(write_pos(client, node_id_module_place_nr, node_id_module_place_dir, 1, 1))
+        await asyncio.create_task(write_pos(client, node_id_module_place_nr, node_id_module_place_dir, 2, 2))
         await asyncio.create_task(read_pos(client, node_id_module_place_nr, node_id_module_place_dir))
 
         # Start Program
         await asyncio.create_task(start_program(client, True))
 
-        await asyncio.sleep(30)
+        await asyncio.sleep(100)
 
         read_is_busy.cancel()
         print("All tasks done")

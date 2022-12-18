@@ -7,7 +7,7 @@ import logging
 
 @uamethod
 def func(parent, value):
-    return value * 2
+    return True
 
 
 async def main():
@@ -18,10 +18,7 @@ async def main():
     await server.init()
     server.set_endpoint("opc.tcp://0.0.0.0:4840")
 
-    # import xml nodes
-    # importer = XmlImporter(server)
-    # nodes = await importer.import_xml('UR5_OPCUA.xml')
-    # wait importer.make_objects(nodes)
+    # import xml nodes from AAS
     await server.import_xml("UR5_OPCUA.xml")
 
     # setup namespace, not really necessary but should as spec
@@ -33,16 +30,24 @@ async def main():
     my_obj = await server.nodes.objects.add_object(idx, "MyObject")
     my_var = await my_obj.add_variable(idx, "MyVariable", 6.7)
 
+    # Reference to existing nodes from AAS
+    # payload = server.get_node("ns=3;i=550")
+
     # Set MyVariable to be writable by clients
     await my_var.set_writable()
-    await server.nodes.objects.add_method(
-        ua.NodeId("ServerMethod", idx),
-        ua.QualifiedName("ServerMethod", idx),
-        func,
-        [ua.VariantType.Int64],
-        [ua.VariantType.Int64],
-    )
+    obj = server.get_node("ns=3;i=501")
+    server.link_method(obj, func)
 
+    # Some method
+    #await server.nodes.objects.add_method(
+    #    ua.NodeId("ServerMethod", idx),
+    #    ua.QualifiedName("ServerMethod", idx),
+    #    func,
+    #    [ua.VariantType.Int64],
+    #    [ua.VariantType.Int64],
+    #)
+
+    # Running Server
     logger.info("Starting server!")
     async with server:
         while True:
@@ -51,9 +56,10 @@ async def main():
             logger.info("Set value of %s to %.1f", my_var, new_val)
             await my_var.write_value(new_val)
 
+            # await payload.write_value(3, ua.VariantType.Int32)
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     asyncio.run(main(), debug=True)
-
 
