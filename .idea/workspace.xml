@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="db76c372-6a78-4ea8-8acd-abd9565ebb47" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/UR5_OPCUA_1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/UR5_OPCUA_1.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client_1.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Client_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Client_2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Server_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Server_2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UR5_OPCUA.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

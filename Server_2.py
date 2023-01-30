@@ -24,11 +24,11 @@ def pick_and_place(module_id, direction_id, aua):
     print("Hello from the other seite")
 
     # Give id for Position of Pick/Place and site of where the module is located to the robot
-    await asyncio.create_task(write_pos(node_id_module_pick_nr, node_id_module_pick_dir, 1, 1))
-    await asyncio.create_task(write_pos(node_id_module_place_nr, node_id_module_place_dir, 2, 2))
+    asyncio.run(write_pos(node_id_module_pick_nr, node_id_module_pick_dir, 1, 1))
+    # await asyncio.create_task(write_pos(node_id_module_place_nr, node_id_module_place_dir, 2, 2))
 
     # Start Program
-    await asyncio.create_task(start_program(True))
+    # await asyncio.create_task(start_program(True))
 
     return True
 
@@ -46,7 +46,7 @@ async def main():
     uri = "https://github.com/heMeyer/UR5_OPCUA_1.git"
     idx = await server.register_namespace(uri)
 
-    # Create root nodes for our stuff
+    # Create root node for our stuff
     objects = server.nodes.objects
 
     # prepare arguments for methods
