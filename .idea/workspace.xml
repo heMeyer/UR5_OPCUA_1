@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="db76c372-6a78-4ea8-8acd-abd9565ebb47" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Server_2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UR5_OPCUA.xml" beforeDir="false" afterPath="$PROJECT_DIR$/UR5_OPCUA.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Server_2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +34,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/henri/Desktop/MII-Project/PythonCode/UR5_OPCUA_1"
+    "last_opened_file_path": "C:/Users/henri/Desktop/Informatik_lernen/Projekt_1.Sem/Python_Code/UR5_OPCUA_1"
   }
 }]]></component>
   <component name="RecentsManager">

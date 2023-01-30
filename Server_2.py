@@ -6,8 +6,8 @@ import logging
 
 @uamethod
 def pick_and_place(parent, value):
-    return True
 
+    return True
 
 async def main():
     logger = logging.getLogger(__name__)
