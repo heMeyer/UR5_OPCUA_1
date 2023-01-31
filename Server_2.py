@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import datetime
 
 from asyncua import Server, ua
 from asyncua.common.methods import uamethod
@@ -8,32 +7,28 @@ from asyncua.common.methods import uamethod
 from Client_2 import read_pos, write_pos, start_program
 
 # Node IDs for communication with the OPC UA server of the robot (control)
-node_id_start = "ns=2;s=start"
-node_id_isBusy = "ns=2;s=isBusy"
+nodeID_start = "ns=2;s=start"
+nodeID_isBusy = "ns=2;s=isBusy"
 
-node_id_module_pick_nr = "ns=2;s=module_pick_nr"
-node_id_module_pick_dir = "ns=2;s=module_pick_dir"
+nodeID_pick_id = "ns=2;s=module_pick_nr"
+nodeID_pick_dir = "ns=2;s=module_pick_dir"
 
-node_id_module_place_nr = "ns=2;s=module_place_nr"
-node_id_module_place_dir = "ns=2;s=module_place_dir"
+nodeID_place_id = "ns=2;s=module_place_nr"
+nodeID_place_dir = "ns=2;s=module_place_dir"
 
 
 # method to set pick and place position and start the process
 @uamethod
-async def pick_and_place(node_id, module_id_pick, module_dir_pick, module_id_place, module_dir_place):
-    print(node_id)
-
+async def pick_and_place(pick_id, pick_dir, place_id, place_dir):
     # Give id for Position of Pick/Place and site of where the module is located to the robot
-    await asyncio.create_task(
-        write_pos(node_id_module_pick_nr, node_id_module_pick_dir, module_id_pick, module_dir_pick))
-    await asyncio.create_task(read_pos(node_id_module_pick_nr, node_id_module_pick_dir))
+    await asyncio.create_task(write_pos(nodeID_pick_id, nodeID_pick_dir, pick_id, pick_dir))
+    await asyncio.create_task(read_pos(nodeID_pick_id, nodeID_pick_dir))
 
-    await asyncio.create_task(
-        write_pos(node_id_module_place_nr, node_id_module_place_dir, module_id_place, module_dir_place))
-    await asyncio.create_task(read_pos(node_id_module_place_nr, node_id_module_place_dir))
+    await asyncio.create_task(write_pos(nodeID_place_id, nodeID_place_dir, place_id, place_dir))
+    await asyncio.create_task(read_pos(nodeID_place_id, nodeID_place_dir))
 
     # Start Program
-    await asyncio.create_task(start_program(True, node_id_start))
+    await asyncio.create_task(start_program(nodeID_start))
 
 
 async def main():
@@ -54,31 +49,31 @@ async def main():
 
     # prepare arguments for methods
     # Pick and place
-    module_id_pick = ua.Argument()
-    module_id_pick.Name = "module_id_pick"
-    module_id_pick.DataType = ua.NodeId(ua.ObjectIds.Int32)
-    module_id_pick.ValueRank = -1
-    module_id_pick.ArrayDimensions = []
-    module_id_pick.Description = ua.LocalizedText("ID of the module for picking")
-    direction_id_pick = ua.Argument()
-    direction_id_pick.Name = "direction_id_pick"
-    direction_id_pick.DataType = ua.NodeId(ua.ObjectIds.Int32)
-    direction_id_pick.ValueRank = -1
-    direction_id_pick.ArrayDimensions = []
-    direction_id_pick.Description = ua.LocalizedText("ID of the direction for picking")
+    pick_id = ua.Argument()
+    pick_id.Name = "pick_id"
+    pick_id.DataType = ua.NodeId(ua.ObjectIds.Int32)
+    pick_id.ValueRank = -1
+    pick_id.ArrayDimensions = []
+    pick_id.Description = ua.LocalizedText("ID of the module for picking")
+    pick_dir = ua.Argument()
+    pick_dir.Name = "pick_dir"
+    pick_dir.DataType = ua.NodeId(ua.ObjectIds.Int32)
+    pick_dir.ValueRank = -1
+    pick_dir.ArrayDimensions = []
+    pick_dir.Description = ua.LocalizedText("Direction of the direction for picking")
 
-    module_id_place = ua.Argument()
-    module_id_place.Name = "module_id_place"
-    module_id_place.DataType = ua.NodeId(ua.ObjectIds.Int32)
-    module_id_place.ValueRank = -1
-    module_id_place.ArrayDimensions = []
-    module_id_place.Description = ua.LocalizedText("ID of the module for placing")
-    direction_id_place = ua.Argument()
-    direction_id_place.Name = "direction_id_place"
-    direction_id_place.DataType = ua.NodeId(ua.ObjectIds.Int32)
-    direction_id_place.ValueRank = -1
-    direction_id_place.ArrayDimensions = []
-    direction_id_place.Description = ua.LocalizedText("ID of the direction for placing")
+    place_id = ua.Argument()
+    place_id.Name = "place_id"
+    place_id.DataType = ua.NodeId(ua.ObjectIds.Int32)
+    place_id.ValueRank = -1
+    place_id.ArrayDimensions = []
+    place_id.Description = ua.LocalizedText("ID of the module for placing")
+    place_dir = ua.Argument()
+    place_dir.Name = "place_dir"
+    place_dir.DataType = ua.NodeId(ua.ObjectIds.Int32)
+    place_dir.ValueRank = -1
+    place_dir.ArrayDimensions = []
+    place_dir.Description = ua.LocalizedText("Direction of the direction for placing")
 
     result = ua.Argument()
     result.Name = "result"
@@ -86,22 +81,22 @@ async def main():
     result.ValueRank = -1
     result.ArrayDimensions = []
     result.Description = ua.LocalizedText("Call successfull")
+
     # Maintenance position
+    # ...
 
     # Populating address space
-    await objects.add_method(idx, "pick_and_place", pick_and_place,
-                             [module_id_pick, direction_id_pick, module_id_place, direction_id_place], [result])
+    await objects.add_method(idx, "pick_and_place", pick_and_place, [pick_id, pick_dir, place_id, place_dir], [result])
 
     # Running Server
     logger.info("Starting server!")
     async with server:
         while True:
             print("Counter Server")
-            await asyncio.sleep(1)
-
-            now = datetime.datetime.now
+            await asyncio.sleep(3)
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    asyncio.run(main(), debug=True)
+    asyncio.run(main())
+    # logging.basicConfig(level=logging.DEBUG)
+    # asyncio.run(main(), debug=True)
