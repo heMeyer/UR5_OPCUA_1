@@ -5,7 +5,7 @@ import datetime
 from asyncua import Server, ua
 from asyncua.common.methods import uamethod
 
-from Client_2 import write_pos, start_program
+from Client_2 import read_pos, write_pos, start_program
 
 # Node IDs for communication with the OPC UA server of the robot (control)
 node_id_start = "ns=2;s=start"
@@ -20,17 +20,18 @@ node_id_module_place_dir = "ns=2;s=module_place_dir"
 
 # method to set pick and place position and start the process
 @uamethod
-def pick_and_place(module_id, direction_id, aua):
+async def pick_and_place(node_id, module_id, module_dir):
     print("Hello from the other seite")
 
     # Give id for Position of Pick/Place and site of where the module is located to the robot
-    asyncio.run(write_pos(node_id_module_pick_nr, node_id_module_pick_dir, 1, 1))
+    # await asyncio.create_task(write_pos(node_id_module_pick_nr, node_id_module_pick_dir, 1, 1))
+    await asyncio.create_task(read_pos(node_id_module_pick_nr, node_id_module_pick_dir))
+
     # await asyncio.create_task(write_pos(node_id_module_place_nr, node_id_module_place_dir, 2, 2))
+    # await asyncio.create_task(read_pos(node_id_module_place_nr, node_id_module_place_dir))
 
     # Start Program
-    # await asyncio.create_task(start_program(True))
-
-    return True
+    # await asyncio.create_task(start_program(True, node_id_start))
 
 
 async def main():
@@ -53,13 +54,13 @@ async def main():
     # Pick and place
     module_id = ua.Argument()
     module_id.Name = "module_id"
-    module_id.DataType = ua.NodeId(ua.ObjectIds.Int64)
+    module_id.DataType = ua.NodeId(ua.ObjectIds.Int32)
     module_id.ValueRank = -1
     module_id.ArrayDimensions = []
     module_id.Description = ua.LocalizedText("ID of the module")
     direction_id = ua.Argument()
     direction_id.Name = "direction_id"
-    direction_id.DataType = ua.NodeId(ua.ObjectIds.Int64)
+    direction_id.DataType = ua.NodeId(ua.ObjectIds.Int32)
     direction_id.ValueRank = -1
     direction_id.ArrayDimensions = []
     direction_id.Description = ua.LocalizedText("ID of the direction")
@@ -72,7 +73,7 @@ async def main():
     # Maintenance position
 
     # Populating address space
-    await objects.add_method(idx, "pick and place", pick_and_place, [module_id, direction_id], [result])
+    await objects.add_method(idx, "pick_and_place", pick_and_place, [module_id, direction_id], [result])
 
     # Running Server
     logger.info("Starting server!")
