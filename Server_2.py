@@ -10,22 +10,22 @@ from Client_2 import read_pos, write_pos, start_program
 nodeID_start = "ns=2;s=start"
 nodeID_isBusy = "ns=2;s=isBusy"
 
-nodeID_pick_id = "ns=2;s=module_pick_nr"
-nodeID_pick_dir = "ns=2;s=module_pick_dir"
+nodeID_pick_id = "ns=2;s=pick_id"
+nodeID_pick_dir = "ns=2;s=pick_dir"
 
-nodeID_place_id = "ns=2;s=module_place_nr"
-nodeID_place_dir = "ns=2;s=module_place_dir"
+nodeID_place_id = "ns=2;s=place_id"
+nodeID_place_dir = "ns=2;s=place_dir"
 
 
 # method to set pick and place position and start the process
 @uamethod
-async def pick_and_place(pick_id, pick_dir, place_id, place_dir):
+async def pick_and_place(node_id, pick_id, pick_dir, place_id, place_dir):
     # Give id for Position of Pick/Place and site of where the module is located to the robot
     await asyncio.create_task(write_pos(nodeID_pick_id, nodeID_pick_dir, pick_id, pick_dir))
-    await asyncio.create_task(read_pos(nodeID_pick_id, nodeID_pick_dir))
+    # await asyncio.create_task(read_pos(nodeID_pick_id, nodeID_pick_dir))
 
     await asyncio.create_task(write_pos(nodeID_place_id, nodeID_place_dir, place_id, place_dir))
-    await asyncio.create_task(read_pos(nodeID_place_id, nodeID_place_dir))
+    # await asyncio.create_task(read_pos(nodeID_place_id, nodeID_place_dir))
 
     # Start Program
     await asyncio.create_task(start_program(nodeID_start))
