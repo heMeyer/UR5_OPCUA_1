@@ -6,14 +6,10 @@ from asyncua import Client, ua
 url_ur5 = "opc.tcp://usertest:usertest@192.168.157.233:4840"
 
 
-async def read_var_cont(nodeID):
+async def read_var(nodeID):
     async with Client(url=url_ur5) as client:
-        while True:
-            node = client.get_node(nodeID)
-            value = await node.read_value()
-
-            print(str(nodeID) + " = " + str(value))
-            await asyncio.sleep(1)
+        node = client.get_node(nodeID)
+        value = await node.read_value()
 
 
 async def start_program(nodeID_start):
