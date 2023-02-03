@@ -10,6 +10,14 @@ async def read_var(nodeID):
     async with Client(url=url_ur5) as client:
         node = client.get_node(nodeID)
         value = await node.read_value()
+        return value
+
+
+async def write_service(nodeID_service_id, service_id):
+    async with Client(url=url_ur5) as client:
+        node = client.get_node(nodeID_service_id)
+        await node.write_value(service_id, ua.VariantType.Int32)
+        # return True
 
 
 async def start_program(nodeID_start):
