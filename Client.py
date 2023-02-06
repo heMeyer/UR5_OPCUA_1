@@ -3,9 +3,13 @@ import logging
 
 from asyncua import Client, ua
 
-url_ur5 = "opc.tcp://usertest:usertest@192.168.157.233:4840"
+# Url for connection to UR5 with username and password (both have to be replaced with actual access data)
+url_ur5 = "opc.tcp://username:password@192.168.157.233:4840"
 
 
+# Client functions used to read and write variables from/to OPC UA Server in robot control
+
+# Read single variable of nodeID, return this value
 async def read_var(nodeID):
     async with Client(url=url_ur5) as client:
         node = client.get_node(nodeID)
@@ -13,19 +17,14 @@ async def read_var(nodeID):
         return value
 
 
-async def write_service(nodeID_service_id, service_id):
+# Write single value to variable with nodeID
+async def write_var(nodeID, value):
     async with Client(url=url_ur5) as client:
-        node = client.get_node(nodeID_service_id)
-        await node.write_value(service_id, ua.VariantType.Int32)
-        # return True
+        node = client.get_node(nodeID)
+        await node.write_value(value, ua.VariantType.Int32)
 
 
-async def start_program(nodeID_start):
-    async with Client(url=url_ur5) as client:
-        node = client.get_node(nodeID_start)
-        await node.write_value(True)
-
-
+# Write two values, here position represented by current id and dir value
 async def write_pos(nodeID_id, nodeID_dir, id, dir):
     async with Client(url=url_ur5) as client:
         node = client.get_node(nodeID_id)
@@ -35,22 +34,27 @@ async def write_pos(nodeID_id, nodeID_dir, id, dir):
         await node.write_value(dir, ua.VariantType.Int32)
 
 
+# Read two values, here position represented by current id and dir value, return these values
 async def read_pos(nodeID_id, nodeID_dir):
     async with Client(url=url_ur5) as client:
         node = client.get_node(nodeID_id)
-        value = await node.read_value()
-        print(str(nodeID_id) + " = " + str(value))
+        value_1 = await node.read_value()
 
         node = client.get_node(nodeID_dir)
-        value = await node.read_value()
-        print(str(nodeID_dir) + " = " + str(value))
+        value_2 = await node.read_value()
+
+        return [value_1, value_2]
 
 
 async def main():
+    logger = logging.getLogger(__name__)
+
+    # Running Client
+    logger.info("Starting Client!")
     async with Client(url=url_ur5) as client:
         while True:
             print("Counter Client")
-            await asyncio.sleep(3)
+            await asyncio.sleep(1)
 
 
 if __name__ == "__main__":

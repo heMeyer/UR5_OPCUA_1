@@ -5,7 +5,8 @@ import queue
 from asyncua import Server, ua
 from asyncua.common.methods import uamethod
 
-from Client_2 import read_var, write_service, read_pos, write_pos, start_program
+# Import of Client functions. This Server is connected to Server of robot control only via the Client
+from Client import read_var, read_pos, write_var, write_pos
 
 # Node IDs for communication with the OPC UA server of the robot control
 nodeID_start = "ns=2;s=start"
@@ -18,23 +19,24 @@ nodeID_pick_dir = "ns=2;s=pick_dir"
 nodeID_place_id = "ns=2;s=place_id"
 nodeID_place_dir = "ns=2;s=place_dir"
 
-# Fifo queue for storing pick and place requests, max 5 elements
+# Fifo queue for storing pick and place requests, pap_quqeue_length defines the max amount of requests stored
 pap_queue_length = 3
 pap_queue = queue.Queue(pap_queue_length)
 
 
-# Function to put robot into service program/position
+# Functions basically just write variables that are used in the robot program to start certain processes
+# and/or read variables to monitor its state. Connection realized using Client functions.
+
+# Put robot into one of its service positions/programs, return True when program runs through
 @uamethod
 async def service(nodeID, service_id):
-    print("Hello from service in server")
-    await asyncio.create_task(write_service(nodeID_service_id, service_id))
+    await asyncio.create_task(write_var(nodeID_service_id, service_id))
     return True
 
 
-# Function to set pick and place position and start the process
+# Queueing pick and place requests, return False when queue already full, True when it's not
 @uamethod
 async def pick_and_place(nodeID, pick_id, pick_dir, place_id, place_dir):
-    # Check if queue already full, put request in queue
     if pap_queue.full():
         return False
     else:
@@ -42,8 +44,9 @@ async def pick_and_place(nodeID, pick_id, pick_dir, place_id, place_dir):
         return True
 
 
+# Start certain robot process
 async def pap_action(pick_id, pick_dir, place_id, place_dir):
-    # Set ID of module and its direction, start Process
+    # Set id of module and its direction, start Process
     # Pick
     await asyncio.create_task(write_pos(nodeID_pick_id, nodeID_pick_dir, pick_id, pick_dir))
     await asyncio.create_task(read_pos(nodeID_pick_id, nodeID_pick_dir))
@@ -51,7 +54,7 @@ async def pap_action(pick_id, pick_dir, place_id, place_dir):
     await asyncio.create_task(write_pos(nodeID_place_id, nodeID_place_dir, place_id, place_dir))
     await asyncio.create_task(read_pos(nodeID_place_id, nodeID_place_dir))
     # Start
-    await asyncio.create_task(start_program(nodeID_start))
+    await asyncio.create_task(write_var(nodeID_start, True))
 
 
 async def main():
@@ -70,7 +73,7 @@ async def main():
     # Create root node for upcoming functions, variables...
     objects = server.nodes.objects
 
-    # prepare arguments for methods
+    # Prepare arguments for methods
     # Pick and place
     pick_id = ua.Argument()  # Implementation as a argument
     pick_id.Name = "pick_id"  # Display name
@@ -105,7 +108,7 @@ async def main():
     result_pap.ArrayDimensions = []
     result_pap.Description = ua.LocalizedText("Call successfull")
 
-    # Service positions, as integer to enable possibility of different actions/positions
+    # Service positions
     service_id = ua.Argument()
     service_id.Name = "service_id"
     service_id.DataType = ua.DataType = ua.NodeId(ua.ObjectIds.Int32)
@@ -124,21 +127,22 @@ async def main():
     await objects.add_method(idx, "pick_and_place", pick_and_place, [pick_id, pick_dir, place_id, place_dir],
                              [result_pap])
     await objects.add_method(idx, "service", service, [service_id], [result_s])
+    robot_busy = await objects.add_variable(idx, "robot_busy", False)
 
     # Running Server
-    logger.info("Starting server!")
+    logger.info("Starting Server!")
     async with server:
         while True:
             # Read/update variables
-            robotBusy = await read_var(nodeID_isBusy)
+            robot_busy = await read_var(nodeID_isBusy)
 
             # Send pick and place instruction if one in queue
-            if pap_queue.qsize() > 0 and not robotBusy:
+            if pap_queue.qsize() > 0 and not robot_busy:
                 instruction = pap_queue.get()
                 await asyncio.create_task(pap_action(instruction[0], instruction[1], instruction[2], instruction[3]))
 
-            # basic server functions
-            print("Robot busy = " + str(robotBusy))
+            # Basic server functions/helper functions
+            print("Robot busy = " + str(robot_busy))
             print("Queue size = " + str(pap_queue.qsize()))
             await asyncio.sleep(1)
 
