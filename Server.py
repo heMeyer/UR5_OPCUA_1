@@ -6,7 +6,7 @@ from asyncua import Server, ua
 from asyncua.common.methods import uamethod
 
 # Import of Client functions. This Server is connected to Server of robot control only via the Client
-from Client import read_var, read_pos, write_var, write_pos
+from Client import read_var, read_pos, write_start, write_service, write_pos
 
 # Node IDs for communication with the OPC UA server of the robot control
 nodeID_start = "ns=2;s=start"
@@ -30,7 +30,7 @@ pap_queue = queue.Queue(pap_queue_length)
 # Put robot into one of its service positions/programs, return True when program runs through
 @uamethod
 async def service(nodeID, service_id):
-    await asyncio.create_task(write_var(nodeID_service_id, service_id))
+    await asyncio.create_task(write_service(nodeID_service_id, service_id))
     return True
 
 
@@ -54,7 +54,7 @@ async def pap_action(pick_id, pick_dir, place_id, place_dir):
     await asyncio.create_task(write_pos(nodeID_place_id, nodeID_place_dir, place_id, place_dir))
     await asyncio.create_task(read_pos(nodeID_place_id, nodeID_place_dir))
     # Start
-    await asyncio.create_task(write_var(nodeID_start, True))
+    await asyncio.create_task(write_start(nodeID_start, True))
 
 
 async def main():
@@ -144,7 +144,7 @@ async def main():
             # Basic server functions/helper functions
             print("Robot busy = " + str(robot_busy))
             print("Queue size = " + str(pap_queue.qsize()))
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import logging
 from asyncua import Client, ua
 
 # Url for connection to UR5 with username and password (both have to be replaced with actual access data)
-url_ur5 = "opc.tcp://username:password@192.168.157.233:4840"
+url_ur5 = "opc.tcp://name:password@192.168.157.233:4840"
 
 
 # Client functions used to read and write variables from/to OPC UA Server in robot control
@@ -18,10 +18,17 @@ async def read_var(nodeID):
 
 
 # Write single value to variable with nodeID
-async def write_var(nodeID, value):
+async def write_service(nodeID, value):
     async with Client(url=url_ur5) as client:
         node = client.get_node(nodeID)
         await node.write_value(value, ua.VariantType.Int32)
+
+
+# Write single value to variable with nodeID
+async def write_start(nodeID, value):
+    async with Client(url=url_ur5) as client:
+        node = client.get_node(nodeID)
+        await node.write_value(value, ua.VariantType.Boolean)
 
 
 # Write two values, here position represented by current id and dir value
@@ -54,7 +61,7 @@ async def main():
     async with Client(url=url_ur5) as client:
         while True:
             print("Counter Client")
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
 
 
 if __name__ == "__main__":
