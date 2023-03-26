@@ -1,6 +1,3 @@
-# UR5e - OPCUA (opcua-anyncio)
-OPC UA Client and Server for reading and writing values from/to UR5e, implemented in Python using opcua-asyncio.
-Assosiated robot program (Universal Robots) dependent an the set variables using OPC UA URcap.
-Full documentation in PDF format will be available soon.
+The goal of the project work in the Digital Factory at HS Emden Leer is to provide a service that moves workpieces from one location to another on demand. For the implementation, a UR5e is used that moves the workpieces in a pick and place program and reacts to information that are transferred to it via OPC UA.
 
--Digital Factory HS Emden Leer -UR5 -UR5e -Transfer Module
+This project contains the documentation of the student research project, CAD models for parts produced in the project, the program code for the OPC UA server/client (Python, opcua-asyncio) and the robot code (URP).
